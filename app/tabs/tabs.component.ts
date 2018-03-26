@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { isAndroid } from "platform";
 import { SelectedIndexChangedEventData, TabView, TabViewItem } from "tns-core-modules/ui/tab-view";
+import { FeatureToggleServiceService } from "../services/feature-toggle.service";
 
 @Component({
     selector: "TabsComponent",
@@ -11,12 +12,14 @@ import { SelectedIndexChangedEventData, TabView, TabViewItem } from "tns-core-mo
 export class TabsComponent implements OnInit {
 
     private _title: string;
+    private activeFeatures: Array<string> = [];
 
-    constructor() {
+    constructor(private featureToggleService: FeatureToggleServiceService) {
         /* ***********************************************************
         * Use the constructor to inject app services that will be needed for
         * the whole tab navigation layout as a whole.
         *************************************************************/
+        this.activeFeatures = this.featureToggleService.getFeatures();
     }
 
     ngOnInit(): void {
@@ -24,6 +27,7 @@ export class TabsComponent implements OnInit {
         * Use the "ngOnInit" handler to initialize data for the whole tab
         * navigation layout as a whole.
         *************************************************************/
+        console.log("listed Features from call: " + this.activeFeatures);
     }
 
     get title(): string {
@@ -55,5 +59,9 @@ export class TabsComponent implements OnInit {
         const selectedTabViewItem = tabView.items[args.newIndex];
 
         this.title = selectedTabViewItem.title;
+    }
+
+    isFeatureActive(feature: string): boolean {
+        return this.activeFeatures.some((x) => x === feature);
     }
 }
